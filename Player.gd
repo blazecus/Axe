@@ -4,8 +4,8 @@ const FLOOR = Vector2(0, -1)
 const MAXSPEED = 150
 const AIRSPEED = 300
 const DRAG = 200
-const GRAVITY = 300
-const JUMPSPEED = 200
+const GRAVITY = 600
+const JUMPSPEED = 250
 
 var velocity = Vector2(0,0)
 var action_state = "standing_r"
@@ -30,7 +30,7 @@ func _physics_process(delta):
 
 	elif on_ground and willjump == 0:
 		velocity.x = 0
-		var new_state = "standing_l"
+		var new_state = "standing_" + action_state.substr(len(action_state)-1)
 		if action_state == "running_r" or action_state == "standing_r":
 			new_state = "standing_r"
 		action_state = new_state
