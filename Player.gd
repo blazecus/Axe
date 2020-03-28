@@ -11,6 +11,7 @@ var velocity = Vector2(0,0)
 var action_state = "standing_r"
 var on_ground = false
 var willjump = 0
+var charging = false
 
 func _physics_process(delta):
 	on_ground = is_on_floor()
@@ -41,9 +42,11 @@ func _physics_process(delta):
 	elif willjump > 0:
 		willjump += delta
 
+	var dirstate = action_state.substr(len(action_state) - 1, len(action_state))
+
 	if Input.is_action_just_pressed("ui_jump") and on_ground:
-		action_state = "jumping_" + action_state.substr(len(action_state) - 1, len(action_state))
-		willjump = .05
+		velocity.y -= JUMPSPEED
+		action_state = "jumping_" + dirstate
 	velocity.y += GRAVITY * delta
 	
 	if velocity.x < 0:
@@ -51,7 +54,21 @@ func _physics_process(delta):
 	elif velocity.x > 0:
 		velocity.x -= DRAG * delta
 		
-			
-	
+	$forwardArm.visible = charging
+	$backArm.visible = charging
+	if(charging):
+		action_state = "throwing_" + action_state
+		$forwardArm.play("charge_" + dirstate)
+		$backArm.play("charge_" + dirstate)
+	else:
+		$forwardArm.play("not")
+		$backArm.play("not")
 	$AnimatedSprite.play(action_state)
+
 	velocity = move_and_slide(velocity, FLOOR)
+	
+	
+func _input(event):
+	if event is InputEventMouseButton:
+
+		charging = !charging
